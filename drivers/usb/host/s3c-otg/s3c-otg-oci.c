@@ -28,6 +28,7 @@
  ****************************************************************************/
 
 #include "s3c-otg-oci.h"
+#include "../../gadget/s3c_udc.h"
 
 static bool ch_enable[16];
 
@@ -242,7 +243,6 @@ int oci_host_init(struct sec_otghost *otghost)
 	} else {
 		hcfg.b.fslssupp = 0;
 	}
-
 	hcfg.b.fslspclksel = HCFG_30_60_MHZ;
 	update_reg_32(HCFG, hcfg.d32);
 
@@ -459,6 +459,7 @@ int oci_channel_init( u8 ch_num, stransfer_t *st_t)
 	gintmsk_t	gintmsk = {.d32 = 0};
 	hcchar_t		hcchar = {.d32 = 0};
 	hctsiz_t		hctsiz = {.d32 = 0};
+	hcsplt_t	hcsplt = {.d32 = 0};
 
 	otg_dbg(OTG_DBG_OCI, "oci_channel_init \n");
 
