@@ -1308,6 +1308,49 @@ static ssize_t usbmode_write(struct device *dev, struct device_attribute *attr, 
   return size;
 }
 
+static ssize_t usbdriver_read(struct device *dev, struct device_attribute *attr, char *buf) {
+  const char *msg = "h:S3C driver (high-speed)";
+  switch(atomic_read(&g_OtgDriver)) {
+  case USB_OTG_DRIVER_S3CFSLS: msg = "l:S3C driver (low-speed / full-speed)";break;
+  case USB_OTG_DRIVER_DWC: msg = "d:DWC driver";break;
+  }
+  return sprintf(buf,"%s\n",msg);
+}
+
+static ssize_t usbdriver_write(struct device *dev, struct device_attribute *attr, const char *buf, size_t size) {
+  char c;
+  printk("input data --> %s", buf);
+  c = buf[0];
+  switch(c) {
+#if defined CONFIG_USB_S3C_OTG_HOST
+  case 'h': atomic_set(&g_OtgDriver, USB_OTG_DRIVER_S3CHS); break;
+  case 'l': atomic_set(&g_OtgDriver, USB_OTG_DRIVER_S3CFSLS); break;
+#endif
+#if defined CONFIG_USB_DWC_OTG
+  case 'd': atomic_set(&g_OtgDriver, USB_OTG_DRIVER_DWC); break;
+#endif
+  default: printk("Invalid input data\n");
+  }
+  return size;
+
+}
+
+static ssize_t usbversion_read(struct device *dev, struct device_attribute *attr, char *buf) {
+  return sprintf(buf,"version: build 5\ndrivers:%s%s\n",
+#if defined CONFIG_USB_S3C_OTG_HOST
+	" S3CHS S3CFSLS"
+#else
+	""
+#endif
+	,
+#if defined CONFIG_USB_DWC_OTG
+	" DWC"
+#else
+	""
+#endif
+  );
+}
+
 // kevinh - Allow changing USB host/target modes on S3C android devices without a special cable
 static DEVICE_ATTR(opmode, S_IRUGO | S_IWUSR, usbmode_read, usbmode_write);
 #endif
