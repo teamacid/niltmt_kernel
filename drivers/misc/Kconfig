@@ -599,4 +599,28 @@ config PN544
 	help
 	  NXP PN544 Near Field Communication controller support.
 
+config SAMSUNG_PARAM
+	bool "Samsung Param Driver"
+	depends on MACH_ARIES
+	default n
+	help
+	  Driver for communication with Samsung's secondary bootloader
+
+config LIVE_OC
+       bool "Support for Live OC"
+       default y
+       help
+         Say Y here to enable Live OC
+
+config CUSTOM_VOLTAGE
+	bool "Support for Custom Voltage"
+	default y
+	help
+	  Say Y here to enable Custom Voltage
+
+config TOUCH_WAKE
+	bool "Support for Touch Wake"
+	default y
+	help
+	  Say Y here to enable Touch Wake
 endif # MISC_DEVICES
