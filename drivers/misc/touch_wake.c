@@ -28,7 +28,7 @@ static bool touch_disabled = false;
 static bool device_suspended = false;
 
 static bool timed_out = true;
-
+static bool prox_near = false;
 static unsigned int touchoff_delay = 45000;
 
 static const unsigned int presspower_delay = 100;
@@ -247,16 +247,17 @@ static struct miscdevice touchwake_device =
     };
 
 void proximity_detected(void)
-{   
-    timed_out = false;
-
-    return;
+{
+	timed_out = false;
+	prox_near = true;
+	return;
 }
 EXPORT_SYMBOL(proximity_detected);
 
 void proximity_off(void)
-{   
-    timed_out = true;
+{
+	timed_out = true;
+	prox_near = false;
 
     return;
 }
@@ -291,18 +292,16 @@ void powerkey_released(void)
 EXPORT_SYMBOL(powerkey_released);
 
 void touch_press(void)
-{   
-    if (device_suspended && touchwake_enabled && mutex_trylock(&lock))
-	{
-	    schedule_work(&presspower_work);
-	}
+{
+	if (device_suspended && touchwake_enabled && !prox_near && mutex_trylock(&lock))
+		schedule_work(&presspower_work);
 
     return;
 }
 EXPORT_SYMBOL(touch_press);
 
 void set_powerkeydev(struct input_dev * input_device)
-{   
+{
     powerkey_device = input_device;
 
     return;
