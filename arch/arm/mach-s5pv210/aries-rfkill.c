@@ -48,6 +48,7 @@ static struct wake_lock rfkill_wake_lock;
 
 static struct rfkill *bt_rfk;
 static const char bt_name[] = "bcm4329";
+static bool current_blocked = true;
 
 #ifdef CONFIG_CPU_DIDLE
 static bool bt_running = false;
