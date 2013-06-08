@@ -480,3 +480,11 @@ config SEC_HEADSET
 	help
 	  Provides support for detecting SEC 2 wire devices, such as wired
 	  headset.
+	  
+config FORCE_FAST_CHARGE
+        tristate "Force AC charge mode at will"
+        default y
+        help
+          A simple sysfs interface to force adapters that
+          are detected as USB to charge as AC.
+
