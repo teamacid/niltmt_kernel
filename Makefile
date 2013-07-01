@@ -347,10 +347,37 @@ CHECK		= sparse
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
-CFLAGS_MODULE   =
-AFLAGS_MODULE   =
-LDFLAGS_MODULE  =
-CFLAGS_KERNEL	=
+MODFLAGS	= -DMODULE \
+		  -march=armv7-a \
+		  -mfpu=neon \
+		  -mtune=cortex-a9 \
+		  -fgcse-after-reload \
+		  -fipa-cp-clone \
+		  -fpredictive-commoning \
+		  -fsched-spec-load \
+		  -funswitch-loops \
+		  -fvect-cost-model
+ifeq ($(TARGET_GCC),4.8)
+MODFLAGS	+=	-fno-aggressive-loop-optimizations \
+			-Wno-sizeof-pointer-memaccess
+endif
+CFLAGS_MODULE   = $(MODFLAGS)
+AFLAGS_MODULE   = $(MODFLAGS)
+LDFLAGS_MODULE  = 
+CFLAGS_KERNEL	= -march=armv7-a \
+		  -mfpu=neon \
+		  -mtune=cortex-a9 \
+		  -fgcse-after-reload \
+		  -fipa-cp-clone \
+		  -fpredictive-commoning \
+		  -fsched-spec-load \
+		  -funswitch-loops \
+		  -fvect-cost-model \
+		  -O2
+ifeq ($(TARGET_GCC),4.8)
+CFLAGS_KERNEL	+=	-fno-aggressive-loop-optimizations \
+			-Wno-sizeof-pointer-memaccess
+endif
 AFLAGS_KERNEL	=
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
@@ -364,11 +391,20 @@ LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include \
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
+ifeq ($(TARGET_GCC),4.8)
+KBUILD_CPPFLAGS  +=  -fno-aggressive-loop-optimizations \
+      -Wno-sizeof-pointer-memaccess
+endif
+
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
-		   -fno-delete-null-pointer-checks
+                   -fno-delete-null-pointer-checks
+ifeq ($(TARGET_GCC),4.8)
+KBUILD_CFLAGS  +=  -fno-aggressive-loop-optimizations \
+      -Wno-sizeof-pointer-memaccess
+endif
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__
