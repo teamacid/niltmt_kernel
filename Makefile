@@ -635,6 +635,9 @@ endif
 
 ifdef CONFIG_DEBUG_INFO
 KBUILD_CFLAGS	+= -g
+ifdef CONFIG_GCC_48_FIXES
+KBUILD_CFLAGS  += -gdwarf-2
+endif
 KBUILD_AFLAGS	+= -gdwarf-2
 endif
 
