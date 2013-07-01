@@ -5,6 +5,7 @@
 #
 
 OBJS		=
++plus_sec := $(call as-instr,.arch_extension sec,+sec)
 
 # Ensure that mmcif loader code appears early in the image
 # to minimise that number of bocks that have to be read in
@@ -15,14 +16,16 @@ OBJS		+= mmcif-sh7372.o
 endif
 endif
 
-AFLAGS_head.o += -DTEXT_OFFSET=$(TEXT_OFFSET)
-
+AFLAGS_head.o := -DTEXT_OFFSET=$(TEXT_OFFSET)
 AFLAGS_head.o += -Wa,-march=armv7-a$(plus_sec)
-AFLAGS_misc.o +=-Wa,-march=armv7-a$(plus_sec)
-AFLAGS_decompress.o += -Wa,-march=armv7-a$(plus_sec)
+HEAD = head.o
 
-HEAD	= head.o
-OBJS	+= misc.o decompress.o
+AFLAGS_misc.o +=-Wa,-march=armv7-a$(plus_sec)
+MISC = misc.o
+
+AFLAGS_decompress.o += -Wa,-march=armv7-a$(plus_sec)
+DECOMPRESS = decompress.o
+
 FONTC	= $(srctree)/drivers/video/console/font_acorn_8x8.c
 
 #
@@ -88,9 +91,9 @@ suffix_$(CONFIG_KERNEL_GZIP) = gzip
 suffix_$(CONFIG_KERNEL_LZO)  = lzo
 suffix_$(CONFIG_KERNEL_LZMA) = lzma
 
-targets       := vmlinux vmlinux.lds \
-		 piggy.$(suffix_y) piggy.$(suffix_y).o \
-		 font.o font.c head.o misc.o $(OBJS)
+targets := vmlinux vmlinux.lds \
+     piggy.$(suffix_y) piggy.$(suffix_y).o \
+     font.o font.c head.o misc.o decompress.o $(OBJS)
 
 # Make sure files are removed during clean
 extra-y       += piggy.gzip piggy.lzo piggy.lzma lib1funcs.S
@@ -139,7 +142,7 @@ bad_syms=$$($(CROSS_COMPILE)nm $@ | sed -n 's/^.\{8\} [bc] \(.*\)/\1/p') && \
   ( echo "following symbols must have non local/private scope:" >&2; \
     echo "$$bad_syms" >&2; rm -f $@; false )
 
-$(obj)/vmlinux: $(obj)/vmlinux.lds $(obj)/$(HEAD) $(obj)/piggy.$(suffix_y).o \
+$(obj)/vmlinux: $(obj)/vmlinux.lds $(obj)/$(HEAD) $(obj)/$(MISC) $(obj)/$(DECOMPRESS) $(obj)/piggy.$(suffix_y).o \
 	 	$(addprefix $(obj)/, $(OBJS)) $(lib1funcs) FORCE
 	$(call if_changed,ld)
 	@$(check_for_bad_syms)
