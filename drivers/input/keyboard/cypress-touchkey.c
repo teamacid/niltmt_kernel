@@ -709,7 +709,6 @@ static struct miscdevice backlightnotification_device = {
 /* bln end */
 #endif
 
->>>>>>> 3c002a8... Touch Wake
 static int cypress_touchkey_probe(struct i2c_client *client,
 		const struct i2c_device_id *id)
 {

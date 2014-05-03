@@ -518,8 +518,7 @@ static void fsa9480_detect_dev(struct fsa9480_usbsw *usbsw)
 		if (usbsw->dev1 & DEV_T1_USB_MASK
 				/*|| usbsw->dev2 & DEV_T2_USB_MASK*/ ) {  // Remove Jig USB
 #endif
-			if (pdata->usb_cb)
-
+			if (pdata->usb_cb){
 				pdata->usb_cb(FSA9480_DETACHED);
 
 #ifdef CONFIG_USB_S3C_OTG_HOST 
