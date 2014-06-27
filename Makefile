@@ -351,7 +351,7 @@ MODFLAGS	= -DMODULE \
 		  -march=armv7-a \
 		  -mfpu=neon \
 		  -mtune=cortex-a8 \
-		  -Os \
+		  -O2 \
 		  -fgcse-after-reload \
 		  -fipa-cp-clone \
 		  -fpredictive-commoning \
@@ -368,7 +368,7 @@ LDFLAGS_MODULE  =
 CFLAGS_KERNEL	= -march=armv7-a \
 		  -mfpu=neon \
 		  -mtune=cortex-a8 \
-		  -Os \
+		  -O2 \
 		  -fgcse-after-reload \
 		  -fipa-cp-clone \
 		  -fpredictive-commoning \
@@ -597,7 +597,7 @@ endif # $(dot-config)
 all: vmlinux
 
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
-KBUILD_CFLAGS	+= -Os
+KBUILD_CFLAGS	+= -O2
   ifdef CONFIG_GCC_48_OPTIMIZE
     KBUILD_CFLAGS  += -Wno-maybe-uninitialized
   endif
